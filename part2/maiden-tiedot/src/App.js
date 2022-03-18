@@ -9,22 +9,57 @@ const Filter = ({ filter, handleFilterChange }) => {
   )
 }
 
+const Weather = ({ country }) => {
+  const [weather, setWeather] = useState()
+
+  const api_key = process.env.REACT_APP_API_KEY
+
+  useEffect(() => {
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?q=${country.name.common}&appid=${api_key}&units=metric`)
+      .then(response => {
+        setWeather(response.data)
+      })
+  }, [])
+
+  if (weather !== undefined) {
+    const icon = weather.weather['0'].icon
+      return (
+        <div>
+          <p>temperature {weather.main.temp} Celcius</p>
+          <img src={`http://openweathermap.org/img/wn/${icon}@2x.png`} />
+          <p>wind {weather.wind.speed} m/s</p>
+        </div>
+      )
+  }
+
+  return <></>
+}
+
 const Country = ({ country }) => {
   return (
     <div>
       <h2>{country.name.common}</h2>
+
       <p>
         capital {country.capital}
         <br />
         area {country.area}
       </p>
+
       <h3>languages:</h3>
+
       <ul>
         {Object.values(country.languages).map(language =>
           <li key={language}>{language}</li>
         )}
       </ul>
+
       <img src={country.flags.png} alt="flag" width='100' />
+
+      <h2>Weather in {country.capital}</h2>
+
+      <Weather country={country}/>
     </div>
   )
 }
