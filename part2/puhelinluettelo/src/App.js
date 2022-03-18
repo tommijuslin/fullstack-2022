@@ -13,7 +13,10 @@ const App = () => {
       id: persons.length + 1,
     }
 
-    setPersons(persons.concat(nameObject))
+    persons[newName] === undefined
+     ? alert(`${newName} is already added to phonebook`)
+     : setPersons(persons.concat(nameObject))
+
     setNewName('')
   }
 
