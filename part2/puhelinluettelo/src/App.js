@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
 
+const Notification = ({ message, state }) => {
+  return (
+    <div className={state}>
+      {message}
+    </div>
+  )
+}
+
 const Filter = ({ filter, handleFilterChange }) => {
   return (
     <div>
@@ -52,6 +60,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState({ text: null, state: null })
 
   useEffect(() => {
     personService
@@ -60,6 +69,13 @@ const App = () => {
         setPersons(initialPersons)
       })
   }, [])
+
+  const showMessage = (text, state) => {
+    setMessage({ text, state })
+    setTimeout(() => {
+      setMessage({ text: null, state: null })
+    }, 5000)
+  }
 
   const addName = (event) => {
     event.preventDefault()
@@ -76,13 +92,27 @@ const App = () => {
           .update(existingPerson.id, nameObject)
           .then(returnedPerson => {
             setPersons(persons.map(person => person.id !== existingPerson.id ? person : returnedPerson))
-        })
+            showMessage(
+              `Updated ${returnedPerson.name}'s number`,
+              'success'
+            )
+          })
+          .catch(error => {
+            showMessage(
+              `Information about ${newName} has already been removed from the server`,
+              'error'
+            )
+          })
       }
     } else {
       personService
         .create(nameObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
+          showMessage(
+            `Added ${returnedPerson.name}`,
+            'success'
+          )
         })
     }
 
@@ -94,6 +124,10 @@ const App = () => {
     if (window.confirm(`Delete ${person.name}?`)) {
       personService.remove(person.id)
       setPersons(persons.filter(p => p.id !== person.id))
+      showMessage(
+        `Deleted ${person.name}`,
+        'success'
+      )
     }
   }
 
@@ -116,6 +150,11 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification
+        message={message.text}
+        state={message.state}
+      />
 
       <Filter
         filter={filter}
