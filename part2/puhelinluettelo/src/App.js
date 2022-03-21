@@ -114,6 +114,9 @@ const App = () => {
             'success'
           )
         })
+        .catch(error => {
+          showMessage(error.response.data.error, 'error')
+        })
     }
 
     setNewName('')
