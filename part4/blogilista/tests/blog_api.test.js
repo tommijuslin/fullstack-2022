@@ -34,9 +34,9 @@ test('returned blogs\' identifying field is id', async () => {
 
 test('a valid blog can be added', async () => {
   const newBlog = {
-    title: "thisisanewblog",
-    author: "bob",
-    url: "www.bobsblog.com",
+    title: 'thisisanewblog',
+    author: 'bob',
+    url: 'www.bobsblog.com',
     likes: 5
   }
 
@@ -53,6 +53,35 @@ test('a valid blog can be added', async () => {
   expect(contents).toContain(
     'thisisanewblog'
   )
+})
+
+test('number of likes is set to 0 if not provided', async () => {
+  const newBlog = {
+    title: 'thisisanewblog',
+    author: 'bob',
+    url: 'www.bobsblog.com'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd[helper.initialBlogs.length].likes).toBe(0)
+})
+
+test('adding blog without title and url results in 400', async () => {
+  const newBlog = {
+    author: 'bob',
+    likes: 50
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
 })
 
 afterAll(() => {
