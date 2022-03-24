@@ -28,9 +28,31 @@ test('returned blogs\' identifying field is id', async () => {
   const response = await api.get('/api/blogs')
 
   response.body.forEach((blog) => {
-    console.log(blog)
     expect(blog.id).toBeDefined()
   })
+})
+
+test('a valid blog can be added', async () => {
+  const newBlog = {
+    title: "thisisanewblog",
+    author: "bob",
+    url: "www.bobsblog.com",
+    likes: 5
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+  const contents = blogsAtEnd.map(b => b.title)
+  expect(contents).toContain(
+    'thisisanewblog'
+  )
 })
 
 afterAll(() => {
