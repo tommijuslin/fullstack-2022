@@ -12,6 +12,7 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', userExtractor, async (request, response) => {
   const body = request.body
+  const user = request.user
   
   if (!body.title || !body.url) {
     return response.status(400).json({ error: 'title or url missing' })
@@ -22,7 +23,7 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes ? body.likes : 0,
-    user: request.user._id
+    user: user._id
   })
 
   const savedBlog = await blog.save()
@@ -31,12 +32,13 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 
 blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   const blog = await Blog.findById(request.params.id)
+  const user = request.user
 
   if (!blog) {
-    return response.status(401).json({ error: 'no blog found' })
+    return response.status(401).json({ error: 'no blog with that id found' })
   }
 
-  if (blog.user.toString() === request.user._id.toString()) {
+  if (blog.user.toString() === user._id.toString()) {
     await Blog.deleteOne(blog)
     return response.status(204).end()
   } else {

@@ -7,10 +7,22 @@ const api = supertest(app)
 
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const { request, response } = require('../app')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.initialBlogs)
+
+  await User.deleteMany({})
+  const passwordHash = await bcrypt.hash('sekret', 10)
+  const user = new User({ username: 'root', passwordHash })
+  await user.save()
+
+  const response = await api
+    .post('/api/login')
+    .send({ username: 'root', password: 'sekret' })
+  
+  token = response.body.token
 })
 
 test('blogs are returned as json', async () => {
@@ -21,15 +33,15 @@ test('blogs are returned as json', async () => {
 })
 
 test('all blogs are returned', async () => {
-  const response = await api.get('/api/blogs')
+  const blogs = await api.get('/api/blogs')
 
-  expect(response.body).toHaveLength(helper.initialBlogs.length)
+  expect(blogs.body).toHaveLength(helper.initialBlogs.length)
 })
 
 test('returned blogs identifying field is id', async () => {
-  const response = await api.get('/api/blogs')
+  const blog = await api.get('/api/blogs')
 
-  response.body.forEach((blog) => {
+  blog.body.forEach((blog) => {
     expect(blog.id).toBeDefined()
   })
 })
@@ -45,6 +57,7 @@ test('a valid blog can be added', async () => {
   await api
     .post('/api/blogs')
     .send(newBlog)
+    .set('Authorization', `Bearer ${token}`)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
@@ -67,6 +80,7 @@ test('number of likes is set to 0 if not provided', async () => {
   await api
     .post('/api/blogs')
     .send(newBlog)
+    .set('Authorization', `Bearer ${token}`)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
@@ -83,7 +97,26 @@ test('adding blog without title and url results in 400', async () => {
   await api
     .post('/api/blogs')
     .send(newBlog)
+    .set('Authorization', `Bearer ${token}`)
     .expect(400)
+})
+
+test('adding a blog without a valid token results in 401', async () => {
+  const newBlog = {
+    title: 'no token blog',
+    author: 'ihavenotoken',
+    url: 'www.notoken.com',
+    likes: 1
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
 })
 
 describe('when there is initially one user at db', () => {
