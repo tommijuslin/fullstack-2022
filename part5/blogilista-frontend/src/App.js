@@ -5,11 +5,20 @@ import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const Notification = ({ message, state }) => {
+  return (
+    <div className={state}>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [message, setMessage] = useState({ text: null, state: null })
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -24,6 +33,13 @@ const App = () => {
       setUser(user)
     }
   }, [])
+
+  const showMessage = (text, state) => {
+    setMessage({ text, state })
+    setTimeout(() => {
+      setMessage({ text: null, state: null })
+    }, 5000)
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -41,7 +57,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      console.log('wrong credentials')
+      showMessage('wrong username or password', 'error')
     }
   }
 
@@ -53,13 +69,20 @@ const App = () => {
 
   if (user === null) {
     return (
-      <LoginForm
-        handleLogin={handleLogin}
-        username={username}
-        setUsername={setUsername}
-        password={password}
-        setPassword={setPassword}
-      />
+      <div>
+        <Notification
+          message={message.text}
+          state={message.state}
+        />
+
+        <LoginForm
+          handleLogin={handleLogin}
+          username={username}
+          setUsername={setUsername}
+          password={password}
+          setPassword={setPassword}
+        />
+      </div>
     )
   }
   return (
@@ -72,9 +95,15 @@ const App = () => {
         </button>
       </p>
 
+      <Notification
+        message={message.text}
+        state={message.state}
+      />
+
       <BlogForm
         blogs={blogs}
         setBlogs={setBlogs}
+        showMessage={showMessage}
       />
 
       <br />
