@@ -1,13 +1,22 @@
-const jwt = require('jsonwebtoken')
 const { userExtractor } = require('../utils/middleware')
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
     .find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
+})
+
+blogsRouter.get('/:id', async (request, response) => {
+  const blog = await Blog
+   .findById(request.params.id).populate('user', { username: 1, name: 1 })
+
+  if (blog) {
+    response.json(blog.toJSON())
+  } else {
+    response.status(404).end()
+  }
 })
 
 blogsRouter.post('/', userExtractor, async (request, response) => {
@@ -44,6 +53,23 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   } else {
     return response.status(401).json({ error: 'unauthorised'})
   }
+})
+
+blogsRouter.put('/:id', (request, response, next) => {
+  const body = request.body
+
+  const blog = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes
+  }
+
+  Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+    .then(updatedBlog => {
+      response.json(updatedBlog.toJSON())
+    })
+    .catch(error => next(error))
 })
 
 module.exports = blogsRouter
