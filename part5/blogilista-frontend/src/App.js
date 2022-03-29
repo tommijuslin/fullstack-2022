@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
+import Toggleable from './components/Toggleable'
+
 import blogService from './services/blogs'
 import loginService from './services/login'
-
-const Notification = ({ message, state }) => {
-  return (
-    <div className={state}>
-      {message}
-    </div>
-  )
-}
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -31,6 +27,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -67,6 +64,17 @@ const App = () => {
     setUser(null)
   }
 
+  const addBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility()
+    blogService
+      .create(blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+      })
+  }
+
+  const blogFormRef = useRef()
+
   if (user === null) {
     return (
       <div>
@@ -100,11 +108,9 @@ const App = () => {
         state={message.state}
       />
 
-      <BlogForm
-        blogs={blogs}
-        setBlogs={setBlogs}
-        showMessage={showMessage}
-      />
+      <Toggleable buttonLabel='new blog' ref={blogFormRef}>
+        <BlogForm createBlog={addBlog} showMessage={showMessage} />
+      </Toggleable>
 
       <br />
 
