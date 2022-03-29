@@ -57,15 +57,15 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
 
   return (
     <div style={blogStyle}>
-        {blog.title} {blog.author}
-        {' '}
-        <button onClick={() => setShowFullInfo(!showFullInfo)}>
-          {showFullInfo ? 'hide' : 'view'}
-        </button>
-        {
-          showFullInfo ? showAllBlogInfo() : []
-        }
-    </div>  
+      {blog.title} {blog.author}
+      {' '}
+      <button onClick={() => setShowFullInfo(!showFullInfo)}>
+        {showFullInfo ? 'hide' : 'view'}
+      </button>
+      {
+        showFullInfo ? showAllBlogInfo() : []
+      }
+    </div>
   )
 }
 
