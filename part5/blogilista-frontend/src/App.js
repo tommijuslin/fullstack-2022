@@ -73,6 +73,25 @@ const App = () => {
       })
   }
 
+  const likeBlog = blog => {
+    const updatedBlog = {
+      ...blog, likes: blog.likes + 1
+    }
+
+    blogService
+      .update(updatedBlog.id, updatedBlog)
+      .then(returnedBlog => {
+        setBlogs(blogs.map(b => b.id !== updatedBlog.id ? b : returnedBlog))
+      })
+  }
+
+  const removeBlog = blog => {
+    if (window.confirm(`Remove blog ${blog.title}?`)) {
+      blogService.remove(blog.id)
+      setBlogs(blogs.filter(b => b.id !== blog.id))
+    }
+  }
+
   const blogFormRef = useRef()
 
   if (user === null) {
@@ -118,8 +137,8 @@ const App = () => {
         <Blog
           key={blog.id}
           blog={blog}
-          blogs={blogs}
-          setBlogs={setBlogs}
+          likeBlog={likeBlog}
+          removeBlog={removeBlog}
           user={user}
         />
       )}

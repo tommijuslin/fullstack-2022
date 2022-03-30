@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import blogService from '../services/blogs'
 import PropTypes from 'prop-types'
 
-const Blog = ({ blog, blogs, setBlogs, user }) => {
+const Blog = ({ blog, likeBlog, removeBlog, user }) => {
   const [showFullInfo, setShowFullInfo] = useState(false)
 
   const blogStyle = {
@@ -11,25 +10,6 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5
-  }
-
-  const likeBlog = blog => {
-    const updatedBlog = {
-      ...blog, likes: blog.likes + 1
-    }
-
-    blogService
-      .update(updatedBlog.id, updatedBlog)
-      .then(returnedBlog => {
-        setBlogs(blogs.map(b => b.id !== updatedBlog.id ? b : returnedBlog))
-      })
-  }
-
-  const removeBlog = blog => {
-    if (window.confirm(`Remove blog ${blog.title}?`)) {
-      blogService.remove(blog.id)
-      setBlogs(blogs.filter(b => b.id !== blog.id))
-    }
   }
 
   const showAllBlogInfo = () => {
@@ -71,9 +51,9 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  blogs: PropTypes.array.isRequired,
-  setBlogs: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired
+  likeBlog: PropTypes.func.isRequired,
+  removeBlog: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
 }
 
 export default Blog
