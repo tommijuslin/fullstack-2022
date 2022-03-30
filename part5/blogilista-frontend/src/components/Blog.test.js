@@ -16,8 +16,17 @@ describe('<Blog />', () => {
 
   const user = { id: '623e1b190f0eca27991fe9a5', name: 'Tommi Juslin' }
 
+  const mockLikeHandler = jest.fn()
+  const mockRemoveHandler = jest.fn()
+
   beforeEach(() => {
-    container = render(<Blog blog={blog} user={user} />).container
+    container = render(
+      <Blog
+        blog={blog}
+        user={user}
+        likeBlog={mockLikeHandler}
+        removeBlog={mockRemoveHandler}
+      />).container
   })
 
   test('only blog title and author are shown by default', () => {
@@ -37,5 +46,15 @@ describe('<Blog />', () => {
     expect(div).toHaveTextContent(blog.author)
     expect(div).toHaveTextContent(blog.url)
     expect(div).toHaveTextContent(blog.likes)
+  })
+
+  test('clicking the like button calls event handler twice', async () => {
+    const view = screen.getByText('view')
+    fireEvent.click(view)
+    const like = screen.getByText('like')
+    fireEvent.click(like)
+    fireEvent.click(like)
+
+    expect(mockLikeHandler.mock.calls).toHaveLength(2)
   })
 })
