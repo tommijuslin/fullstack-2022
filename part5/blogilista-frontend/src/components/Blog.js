@@ -56,7 +56,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div className='blog' style={blogStyle}>
       {blog.title} {blog.author}
       {' '}
       <button onClick={() => setShowFullInfo(!showFullInfo)}>
