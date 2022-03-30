@@ -94,6 +94,10 @@ const App = () => {
 
   const blogFormRef = useRef()
 
+  blogs.sort((a, b) => {
+    return b.likes - a.likes
+  })
+
   if (user === null) {
     return (
       <div>
