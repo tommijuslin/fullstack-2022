@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import { Routes, Route, useMatch } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
 import { setNotification } from "./reducers/notificationReducer";
 import { initializeBlogs } from "./reducers/blogReducer";
 import { setUser, logout } from "./reducers/loggedUserReducer";
@@ -14,6 +13,7 @@ import Toggleable from "./components/Toggleable";
 import Notification from "./components/Notification";
 import BlogList from "./components/BlogList";
 import UserList from "./components/UserList";
+import User from "./components/User";
 
 import loginService from "./services/login";
 
@@ -22,7 +22,8 @@ const App = () => {
   const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.loggedUser);
+  const loggedUser = useSelector((state) => state.loggedUser);
+  const users = useSelector((state) => state.users);
 
   useEffect(() => {
     dispatch(initializeBlogs());
@@ -64,7 +65,10 @@ const App = () => {
 
   const blogFormRef = useRef();
 
-  if (user === null) {
+  const match = useMatch("users/:id");
+  const user = match ? users.find((user) => user.id === match.params.id) : null;
+
+  if (loggedUser === null) {
     return (
       <div>
         <Notification />
@@ -80,33 +84,32 @@ const App = () => {
     );
   }
   return (
-    <Router>
-      <div>
-        <h2>blogs</h2>
-        <p>
-          {user.name} logged in
-          <button onClick={handleLogout}>logout</button>
-        </p>
+    <div>
+      <h2>blogs</h2>
+      <p>
+        {loggedUser.name} logged in
+        <button onClick={handleLogout}>logout</button>
+      </p>
 
-        <Notification />
+      <Notification />
 
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Toggleable buttonLabel="new blog" ref={blogFormRef}>
-                  <BlogForm blogFormRef={blogFormRef} />
-                </Toggleable>
-                <br />
-                <BlogList />
-              </>
-            }
-          />
-          <Route path="/users" element={<UserList />} />
-        </Routes>
-      </div>
-    </Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <Toggleable buttonLabel="new blog" ref={blogFormRef}>
+                <BlogForm blogFormRef={blogFormRef} />
+              </Toggleable>
+              <br />
+              <BlogList />
+            </>
+          }
+        />
+        <Route path="/users" element={<UserList users={users} />} />
+        <Route path="/users/:id" element={<User user={user} />} />
+      </Routes>
+    </div>
   );
 };
 
