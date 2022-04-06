@@ -15,9 +15,9 @@ import BlogList from "./components/BlogList";
 import UserList from "./components/UserList";
 import User from "./components/User";
 import Blog from "./components/Blog";
+import Menu from "./components/Menu";
 
 import loginService from "./services/login";
-// import blogService from "./services/blogs";
 
 const App = () => {
   const [username, setUsername] = useState("");
@@ -95,11 +95,8 @@ const App = () => {
   }
   return (
     <div>
-      <h2>blogs</h2>
-      <p>
-        {loggedUser.name} logged in
-        <button onClick={handleLogout}>logout</button>
-      </p>
+      <Menu loggedUser={loggedUser} handleLogout={handleLogout} />
+      <h2>blog app</h2>
 
       <Notification />
 
@@ -111,7 +108,6 @@ const App = () => {
               <Toggleable buttonLabel="new blog" ref={blogFormRef}>
                 <BlogForm blogFormRef={blogFormRef} />
               </Toggleable>
-              <br />
               <BlogList />
             </>
           }
