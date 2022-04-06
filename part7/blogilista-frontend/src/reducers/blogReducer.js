@@ -38,7 +38,6 @@ export const initializeBlogs = () => {
 
 export const createBlog = (blog) => {
   return async (dispatch) => {
-    console.log("moro createblogist", blog);
     const newBlog = await blogService.create(blog);
     dispatch(appendBlog(newBlog));
   };

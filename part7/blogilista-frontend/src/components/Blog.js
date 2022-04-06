@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { like, remove } from "../reducers/blogReducer";
 import { setNotification } from "../reducers/notificationReducer";
 import PropTypes from "prop-types";
@@ -7,6 +7,7 @@ import PropTypes from "prop-types";
 const Blog = ({ blog }) => {
   const [showFullInfo, setShowFullInfo] = useState(false);
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.loggedUser);
 
   const blogStyle = {
     paddingTop: 10,
@@ -42,7 +43,9 @@ const Blog = ({ blog }) => {
           </button>
         </div>
         <div>{blog.user.name}</div>
-        <button onClick={() => handleRemove(blog)}>remove</button>
+        {blog.user.name === user.name ? (
+          <button onClick={() => handleRemove(blog)}>remove</button>
+        ) : null}
       </div>
     );
   };
