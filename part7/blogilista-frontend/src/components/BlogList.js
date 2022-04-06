@@ -1,7 +1,16 @@
 import { useSelector } from "react-redux";
-import Blog from "./Blog";
+import { Link } from "react-router-dom";
+// import Blog from "./Blog";
 
 const BlogList = () => {
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: "solid",
+    borderWidth: 1,
+    marginBottom: 5,
+  };
+
   const items = useSelector((state) => state.blogs);
 
   const blogs = [...items];
@@ -10,7 +19,13 @@ const BlogList = () => {
     .sort((a, b) => {
       return b.likes - a.likes;
     })
-    .map((blog) => <Blog key={blog.id} blog={blog} user={blog.user} />);
+    .map((blog) => (
+      <div key={blog.id} className="blog" style={blogStyle}>
+        <Link to={`/blogs/${blog.id}`}>
+          {blog.title} by {blog.author}
+        </Link>
+      </div>
+    ));
 };
 
 export default BlogList;

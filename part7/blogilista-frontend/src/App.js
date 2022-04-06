@@ -14,8 +14,10 @@ import Notification from "./components/Notification";
 import BlogList from "./components/BlogList";
 import UserList from "./components/UserList";
 import User from "./components/User";
+import Blog from "./components/Blog";
 
 import loginService from "./services/login";
+// import blogService from "./services/blogs";
 
 const App = () => {
   const [username, setUsername] = useState("");
@@ -23,7 +25,10 @@ const App = () => {
 
   const dispatch = useDispatch();
   const loggedUser = useSelector((state) => state.loggedUser);
+  const blogs = useSelector((state) => state.blogs);
   const users = useSelector((state) => state.users);
+
+  const blogFormRef = useRef();
 
   useEffect(() => {
     dispatch(initializeBlogs());
@@ -63,10 +68,15 @@ const App = () => {
     dispatch(logout());
   };
 
-  const blogFormRef = useRef();
+  const matchUser = useMatch("users/:id");
+  const user = matchUser
+    ? users.find((user) => user.id === matchUser.params.id)
+    : null;
 
-  const match = useMatch("users/:id");
-  const user = match ? users.find((user) => user.id === match.params.id) : null;
+  const matchBlog = useMatch("blogs/:id");
+  const blog = matchBlog
+    ? blogs.find((blog) => blog.id === matchBlog.params.id)
+    : null;
 
   if (loggedUser === null) {
     return (
@@ -108,6 +118,7 @@ const App = () => {
         />
         <Route path="/users" element={<UserList users={users} />} />
         <Route path="/users/:id" element={<User user={user} />} />
+        <Route path="/blogs/:id" element={<Blog blog={blog} />} />
       </Routes>
     </div>
   );
