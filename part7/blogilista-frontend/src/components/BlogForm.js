@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setNotification } from "../reducers/notificationReducer";
-import PropTypes from "prop-types";
+import { createBlog } from "../reducers/blogReducer";
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = ({ blogFormRef }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
@@ -12,11 +12,13 @@ const BlogForm = ({ createBlog }) => {
 
   const addBlog = async (event) => {
     event.preventDefault();
-    createBlog({
+    blogFormRef.current.toggleVisibility();
+    const newBlog = {
       title,
       author,
       url,
-    });
+    };
+    dispatch(createBlog(newBlog));
     dispatch(
       setNotification(
         { text: `a new blog ${title} by ${author} added`, type: "success" },
@@ -71,10 +73,6 @@ const BlogForm = ({ createBlog }) => {
       </form>
     </div>
   );
-};
-
-BlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired,
 };
 
 export default BlogForm;
