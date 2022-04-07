@@ -34,12 +34,18 @@ const remove = (id) => {
   axios.delete(`${baseUrl}/${id}`, config);
 };
 
+const comment = async (id, comment) => {
+  const response = await axios.post(`${baseUrl}/${id}/comments`, comment);
+  return response.data;
+};
+
 const blogService = {
   setToken,
   getAll,
   create,
   update,
   remove,
+  comment,
 };
 
 export default blogService;

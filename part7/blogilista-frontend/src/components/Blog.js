@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { like } from "../reducers/blogReducer";
+import Comment from "./Comment";
 // import { setNotification } from "../reducers/notificationReducer";
 
 const Blog = ({ blog }) => {
@@ -32,6 +33,7 @@ const Blog = ({ blog }) => {
       <button onClick={() => handleLike(blog)}>like</button>
       <br />
       added by {user.name}
+      <Comment blog={blog} />
     </div>
   );
 };
