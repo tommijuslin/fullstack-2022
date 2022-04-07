@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createComment } from "../reducers/blogReducer";
+import { SmallTitle, Input, ButtonNoMargin, ListItem } from "./Styles";
 
 const Comment = ({ blog }) => {
   const [comment, setComment] = useState("");
@@ -18,19 +19,19 @@ const Comment = ({ blog }) => {
 
   return (
     <div>
-      <h2>comments</h2>
+      <SmallTitle>comments</SmallTitle>
       <form onSubmit={addComment}>
-        <input
+        <Input
           type="text"
           value={comment}
           name="title"
           onChange={({ target }) => setComment(target.value)}
         />
-        <button type="submit">add comment</button>
+        <ButtonNoMargin type="submit">add comment</ButtonNoMargin>
       </form>
       <ul>
         {blog.comments.map((comment) => (
-          <li key={comment}>{comment}</li>
+          <ListItem key={comment}>{comment}</ListItem>
         ))}
       </ul>
     </div>

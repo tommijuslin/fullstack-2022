@@ -11,11 +11,12 @@ import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import Toggleable from "./components/Toggleable";
 import Notification from "./components/Notification";
-import BlogList from "./components/BlogList";
 import UserList from "./components/UserList";
 import User from "./components/User";
 import Blog from "./components/Blog";
 import Menu from "./components/Menu";
+
+import { Page, Title, StyledBlogList, Content } from "./components/Styles";
 
 import loginService from "./services/login";
 
@@ -80,43 +81,44 @@ const App = () => {
 
   if (loggedUser === null) {
     return (
-      <div>
-        <Notification />
-
-        <LoginForm
-          handleLogin={handleLogin}
-          username={username}
-          setUsername={setUsername}
-          password={password}
-          setPassword={setPassword}
-        />
-      </div>
+      <Page>
+        <Content>
+          <Notification />
+          <LoginForm
+            handleLogin={handleLogin}
+            username={username}
+            setUsername={setUsername}
+            password={password}
+            setPassword={setPassword}
+          />
+        </Content>
+      </Page>
     );
   }
   return (
-    <div>
+    <Page>
       <Menu loggedUser={loggedUser} handleLogout={handleLogout} />
-      <h2>blog app</h2>
-
-      <Notification />
-
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <Toggleable buttonLabel="new blog" ref={blogFormRef}>
-                <BlogForm blogFormRef={blogFormRef} />
-              </Toggleable>
-              <BlogList />
-            </>
-          }
-        />
-        <Route path="/users" element={<UserList users={users} />} />
-        <Route path="/users/:id" element={<User user={user} />} />
-        <Route path="/blogs/:id" element={<Blog blog={blog} />} />
-      </Routes>
-    </div>
+      <Content>
+        <Title>blog app</Title>
+        <Notification />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Toggleable buttonLabel="new blog" ref={blogFormRef}>
+                  <BlogForm blogFormRef={blogFormRef} />
+                </Toggleable>
+                <StyledBlogList />
+              </>
+            }
+          />
+          <Route path="/users" element={<UserList users={users} />} />
+          <Route path="/users/:id" element={<User user={user} />} />
+          <Route path="/blogs/:id" element={<Blog blog={blog} />} />
+        </Routes>
+      </Content>
+    </Page>
   );
 };
 

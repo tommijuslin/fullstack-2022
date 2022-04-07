@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setNotification } from "../reducers/notificationReducer";
 import { createBlog } from "../reducers/blogReducer";
+import { ButtonNoMargin, StyledText, Input, SmallTitle } from "./Styles";
 
 const BlogForm = ({ blogFormRef }) => {
   const [title, setTitle] = useState("");
@@ -32,11 +33,11 @@ const BlogForm = ({ blogFormRef }) => {
 
   return (
     <div className="blogForm">
-      <h2>create new</h2>
+      <SmallTitle>create new</SmallTitle>
       <form onSubmit={addBlog}>
         <div>
-          title
-          <input
+          <StyledText>title</StyledText>
+          <Input
             id="title"
             type="text"
             value={title}
@@ -46,8 +47,8 @@ const BlogForm = ({ blogFormRef }) => {
           />
         </div>
         <div>
-          author
-          <input
+          <StyledText>author</StyledText>
+          <Input
             id="author"
             type="text"
             value={author}
@@ -57,8 +58,8 @@ const BlogForm = ({ blogFormRef }) => {
           />
         </div>
         <div>
-          url
-          <input
+          <StyledText>url</StyledText>
+          <Input
             id="url"
             type="text"
             value={url}
@@ -67,9 +68,9 @@ const BlogForm = ({ blogFormRef }) => {
             placeholder="url"
           />
         </div>
-        <button id="create-button" type="submit">
+        <ButtonNoMargin id="create-button" type="submit">
           create
-        </button>
+        </ButtonNoMargin>
       </form>
     </div>
   );

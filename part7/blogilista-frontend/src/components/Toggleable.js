@@ -1,4 +1,5 @@
 import { useState, useImperativeHandle, forwardRef } from "react";
+import { ButtonNoMargin } from "./Styles";
 import PropTypes from "prop-types";
 
 const Toggleable = forwardRef((props, ref) => {
@@ -20,13 +21,13 @@ const Toggleable = forwardRef((props, ref) => {
   return (
     <div>
       <div style={hideWhenVisible}>
-        <button id="new-blog" onClick={toggleVisibility}>
+        <ButtonNoMargin id="new-blog" onClick={toggleVisibility}>
           {props.buttonLabel}
-        </button>
+        </ButtonNoMargin>
       </div>
       <div style={showWhenVisible}>
         {props.children}
-        <button onClick={toggleVisibility}>cancel</button>
+        <ButtonNoMargin onClick={toggleVisibility}>cancel</ButtonNoMargin>
       </div>
     </div>
   );

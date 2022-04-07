@@ -1,21 +1,25 @@
-import { Link } from "react-router-dom";
+import { SmallTitle, StyledLink, StyledText } from "./Styles";
 
 const UserList = ({ users }) => {
   return (
     <div>
-      <h2>Users</h2>
+      <SmallTitle>Users</SmallTitle>
       <table>
         <tbody>
           <tr>
             <td></td>
-            <td>blogs created</td>
+            <td>
+              <StyledText>blogs created</StyledText>
+            </td>
           </tr>
           {users.map((user) => (
             <tr key={user.id}>
               <td>
-                <Link to={`/users/${user.id}`}>{user.name}</Link>
+                <StyledLink to={`/users/${user.id}`}>{user.name}</StyledLink>
               </td>
-              <td>{user.blogs.length}</td>
+              <td>
+                <StyledText>{user.blogs.length}</StyledText>
+              </td>
             </tr>
           ))}
         </tbody>

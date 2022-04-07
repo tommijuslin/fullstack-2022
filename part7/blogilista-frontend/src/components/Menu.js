@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Button, StyledLink, StyledText, Navigation } from "./Styles";
 
 const Menu = ({ loggedUser, handleLogout }) => {
   const padding = {
@@ -6,16 +6,16 @@ const Menu = ({ loggedUser, handleLogout }) => {
   };
 
   return (
-    <div>
-      <Link style={padding} to="/">
+    <Navigation>
+      <StyledLink style={padding} to="/">
         blogs
-      </Link>
-      <Link style={padding} to="/users">
+      </StyledLink>
+      <StyledLink style={padding} to="/users">
         users
-      </Link>
-      {loggedUser.name} logged in
-      <button onClick={handleLogout}>logout</button>
-    </div>
+      </StyledLink>
+      <StyledText>{loggedUser.name} logged in</StyledText>
+      <Button onClick={handleLogout}>logout</Button>
+    </Navigation>
   );
 };
 

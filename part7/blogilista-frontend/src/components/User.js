@@ -1,3 +1,5 @@
+import { SmallTitle, ListItem } from "./Styles";
+
 const User = ({ user }) => {
   if (!user) {
     return null;
@@ -5,11 +7,11 @@ const User = ({ user }) => {
 
   return (
     <div>
-      <h2>{user.name}</h2>
-      <h3>added blogs</h3>
+      <SmallTitle>{user.name}</SmallTitle>
+      <SmallTitle>added blogs</SmallTitle>
       <ul>
         {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
+          <ListItem key={blog.id}>{blog.title}</ListItem>
         ))}
       </ul>
     </div>

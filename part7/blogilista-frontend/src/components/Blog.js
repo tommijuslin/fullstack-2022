@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { like } from "../reducers/blogReducer";
 import Comment from "./Comment";
+import { Button, SmallTitle, StyledText } from "./Styles";
 // import { setNotification } from "../reducers/notificationReducer";
 
 const Blog = ({ blog }) => {
@@ -26,13 +27,13 @@ const Blog = ({ blog }) => {
 
   return (
     <div>
-      <h2>{blog.title}</h2>
+      <SmallTitle>{blog.title}</SmallTitle>
       <a href={blog.url}>{blog.url}</a>
       <br />
-      {blog.likes} likes
-      <button onClick={() => handleLike(blog)}>like</button>
+      <StyledText>{blog.likes} likes</StyledText>
+      <Button onClick={() => handleLike(blog)}>like</Button>
       <br />
-      added by {user.name}
+      <StyledText>added by {user.name}</StyledText>
       <Comment blog={blog} />
     </div>
   );

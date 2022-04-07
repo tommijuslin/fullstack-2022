@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { Input, ButtonNoMargin, Title, StyledText } from "./Styles";
 
 const LoginForm = ({
   handleLogin,
@@ -9,29 +10,25 @@ const LoginForm = ({
 }) => {
   return (
     <div>
-      <h2>log in to application</h2>
+      <Title>log in to application</Title>
       <form onSubmit={handleLogin}>
         <div>
-          username
-          <input
-            id="username"
+          <StyledText>username</StyledText>
+          <Input
             type="text"
             value={username}
-            name="Username"
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
-          password
-          <input
-            id="password"
+          <StyledText>password</StyledText>
+          <Input
             type="password"
             value={password}
-            name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">login</button>
+        <ButtonNoMargin type="submit">login</ButtonNoMargin>
       </form>
     </div>
   );
