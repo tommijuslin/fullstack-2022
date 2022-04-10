@@ -190,9 +190,10 @@ const resolvers = {
         }
       }
 
-      const book = new Book({ ...args, author: author.id });
+      let book = new Book({ ...args, author: author.id });
       try {
         await book.save();
+        book = await Book.findOne({ title: args.title }).populate("author");
       } catch (error) {
         throw new UserInputError(error.message, {
           invalidArgs: args,
