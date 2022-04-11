@@ -12,18 +12,18 @@ import { ALL_AUTHORS, ALL_BOOKS, ME } from "./queries";
 const App = () => {
   const [token, setToken] = useState(null);
   const [page, setPage] = useState("authors");
+  const [user, setUser] = useState(null);
   const client = useApolloClient();
-
-  useEffect(() => {
-    const token = window.localStorage.getItem("library-user-token");
-    if (token) {
-      setToken(token);
-    }
-  }, []);
 
   const authors = useQuery(ALL_AUTHORS);
   const books = useQuery(ALL_BOOKS);
-  const user = useQuery(ME);
+  const loggedUser = useQuery(ME);
+
+  useEffect(() => {
+    if (loggedUser.data) {
+      setUser(loggedUser.data.me);
+    }
+  }, [loggedUser.data]);
 
   if (authors.loading || books.loading) {
     return <div>loading...</div>;
@@ -45,7 +45,6 @@ const App = () => {
     setToken(null);
     localStorage.clear();
     client.resetStore();
-    setPage("authors");
   };
 
   let navigation;
@@ -77,7 +76,9 @@ const App = () => {
       <Books show={page === "books"} genres={genres} />
       <NewBook show={page === "add"} />
       <LoginForm show={page === "login"} setToken={setToken} />
-      <Recommend show={page === "recommend"} user={user.data.me} />
+      {user && token ? (
+        <Recommend show={page === "recommend"} user={user} />
+      ) : null}
     </div>
   );
 };

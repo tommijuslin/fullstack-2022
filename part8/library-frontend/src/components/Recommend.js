@@ -7,14 +7,14 @@ const Recommend = ({ show, user }) => {
   });
 
   if (books.loading) {
-    return <div>loading...</div>;
+    return <p>loading...</p>;
   }
-
-  books = books.data.allBooks;
 
   if (!show) {
     return null;
   }
+
+  books = books.data.allBooks;
 
   return (
     <div>
