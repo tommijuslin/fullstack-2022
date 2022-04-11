@@ -3,7 +3,7 @@ import Select from "react-select";
 import { useQuery } from "@apollo/client";
 import { ALL_BOOKS } from "../queries";
 
-const Books = ({ show, genres }) => {
+const Books = ({ show, books, genres }) => {
   const [filter, setFilter] = useState({ value: null, label: "show all" });
 
   let filteredBooks = useQuery(ALL_BOOKS, {

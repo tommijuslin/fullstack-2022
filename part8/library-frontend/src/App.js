@@ -86,7 +86,12 @@ const App = () => {
     <div>
       {navigation}
       <Authors show={page === "authors"} authors={authors.data.allAuthors} />
-      <Books show={page === "books"} genres={genres} />
+      {/* <Books show={page === "books"} genres={genres} /> */}
+      <Books
+        show={page === "books"}
+        books={books.data.allBooks}
+        genres={genres}
+      />
       <NewBook show={page === "add"} />
       <LoginForm show={page === "login"} setToken={setToken} />
       {user && token ? (
