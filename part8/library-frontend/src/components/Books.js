@@ -1,7 +1,29 @@
+import { useState } from "react";
+import Select from "react-select";
+
 const Books = ({ show, books }) => {
+  const [filter, setFilter] = useState({ value: "all", label: "all" });
+
   if (!show) {
     return null;
   }
+
+  let genres = Array.from(
+    new Set(
+      books.reduce((acc, cur) => {
+        return acc.concat(cur.genres);
+      }, [])
+    )
+  );
+
+  genres = genres
+    .map((genre) => ({ value: genre, label: genre }))
+    .concat({ value: "all", label: "all" });
+
+  const booksToShow =
+    filter.value === "all"
+      ? books
+      : books.filter((book) => book.genres.includes(filter.value));
 
   return (
     <div>
@@ -14,7 +36,7 @@ const Books = ({ show, books }) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map((book) => (
+          {booksToShow.map((book) => (
             <tr key={book.id}>
               <td>{book.title}</td>
               <td>{book.author.name}</td>
@@ -23,6 +45,7 @@ const Books = ({ show, books }) => {
           ))}
         </tbody>
       </table>
+      <Select defaultValue={filter} onChange={setFilter} options={genres} />
     </div>
   );
 };
