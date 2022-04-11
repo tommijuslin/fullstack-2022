@@ -167,6 +167,13 @@ const resolvers = {
       return filtered;
     },
     allAuthors: async () => await Author.find({}),
+    me: async (root, args, { currentUser }) => {
+      if (!currentUser) {
+        throw new AuthenticationError("not authenticated");
+      }
+
+      return currentUser;
+    },
   },
   Author: {
     bookCount: async (root) =>
