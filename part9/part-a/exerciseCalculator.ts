@@ -13,6 +13,19 @@ interface ratingInfo {
   ratingDescription: string;
 }
 
+const isNumber = (value: any) => !isNaN(Number(value));
+
+const parseArgumentsExercise = (args: Array<string>): Array<number> => {
+  if (args.length < 4) throw new Error('Not enough arguments');
+  args = args.slice(2);
+
+  if (args.every(isNumber)) {
+    return args.map((arg) => Number(arg));
+  } else {
+    throw new Error('Provided values were not numbers!');
+  }
+};
+
 const ratingCalculator = (target: number, average: number): ratingInfo => {
   const deficit = Math.abs(target - average);
 
@@ -21,7 +34,7 @@ const ratingCalculator = (target: number, average: number): ratingInfo => {
       rating: 3,
       ratingDescription: 'Great job, keep it up!',
     };
-  } else if (deficit <= 0.25) {
+  } else if (deficit <= 0.5) {
     return {
       rating: 2,
       ratingDescription:
@@ -36,8 +49,8 @@ const ratingCalculator = (target: number, average: number): ratingInfo => {
 };
 
 const calculateExercises = (
-  days: Array<number>,
-  target: number
+  target: number,
+  days: Array<number>
 ): exerciseHours => {
   const periodLength = days.length;
   const trainingDays = days.filter((hours) => hours !== 0).length;
@@ -56,4 +69,13 @@ const calculateExercises = (
   };
 };
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+try {
+  const hoursPerDay = parseArgumentsExercise(process.argv);
+  console.log(calculateExercises(hoursPerDay[0], hoursPerDay.slice(1)));
+} catch (error: unknown) {
+  let errorMessage = 'Something bad happened.';
+  if (error instanceof Error) {
+    errorMessage += ' Error: ' + error.message;
+  }
+  console.log(errorMessage);
+}
