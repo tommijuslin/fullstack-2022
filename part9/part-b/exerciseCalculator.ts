@@ -13,13 +13,11 @@ interface ratingInfo {
   ratingDescription: string;
 }
 
-const isNumber = (value: any) => !isNaN(Number(value));
-
 const parseArgumentsExercise = (args: Array<string>): Array<number> => {
   if (args.length < 4) throw new Error('Not enough arguments');
   args = args.slice(2);
 
-  if (args.every(isNumber)) {
+  if (args.every((value) => !isNaN(Number(value)))) {
     return args.map((arg) => Number(arg));
   } else {
     throw new Error('Provided values were not numbers!');
