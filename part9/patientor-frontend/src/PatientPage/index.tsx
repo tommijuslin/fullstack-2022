@@ -1,11 +1,15 @@
 import axios from "axios";
 import React from "react";
+import { Button } from "@material-ui/core";
+
 import { useParams } from "react-router-dom";
 
 import { useStateValue, updatePatient } from "../state";
 import { apiBaseUrl } from "../constants";
 import { Patient, Entry } from "../types";
 import EntryDetails from "./EntryDetails";
+import AddEntryModal from "../AddEntryModal";
+import { EntryFormValues } from "../AddEntryModal/AddEntryForm";
 
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
@@ -13,6 +17,16 @@ import { SvgIcon } from "@material-ui/core";
 
 const PatientPage = () => {
   const [{ patients, diagnoses }, dispatch] = useStateValue();
+
+  const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string>();
+
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+  };
 
   const { id } = useParams<{ id: string }>();
 
@@ -34,15 +48,37 @@ const PatientPage = () => {
     void fetchPatient();
   }, [dispatch]);
 
+  const submitNewEntry = async (values: EntryFormValues) => {
+    try {
+      const { data: newEntry } = await axios.post<Patient>(
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        `${apiBaseUrl}/patients/${id}/entries`,
+        values
+      );
+      dispatch(updatePatient(newEntry));
+      closeModal();
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        console.error(e?.response?.data || "Unrecognized axios error");
+        setError(
+          String(e?.response?.data?.error) || "Unrecognized axios error"
+        );
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
+  };
+
+  if (Object.keys(diagnoses).length === 0 || (patient && !patient.entries)) {
+    return <h2>Loading...</h2>;
+  }
+
   if (!patient) {
     return <h2>No patient found</h2>;
   }
 
   const icon = patient.gender === "male" ? MaleIcon : FemaleIcon;
-
-  if (Object.keys(diagnoses).length === 0 || !patient.entries) {
-    return <h2>Loading...</h2>;
-  }
 
   return (
     <div>
@@ -58,6 +94,15 @@ const PatientPage = () => {
       {patient.entries.map((entry: Entry) => (
         <EntryDetails key={entry.id} entry={entry} />
       ))}
+      <AddEntryModal
+        modalOpen={modalOpen}
+        onSubmit={submitNewEntry}
+        error={error}
+        onClose={closeModal}
+      />
+      <Button variant="contained" onClick={() => openModal()}>
+        Add New Entry
+      </Button>
     </div>
   );
 };

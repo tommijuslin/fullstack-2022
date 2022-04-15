@@ -1,4 +1,4 @@
-import { Gender, NewPatient, NewEntry } from "./types";
+import { Gender, NewPatient, NewEntry, Type, HealthCheckRating } from "./types";
 
 const isString = (text: unknown): text is string => {
   return typeof text === "string" || text instanceof String;
@@ -10,14 +10,6 @@ const parseString = (item: unknown, label: string): string => {
   }
 
   return item;
-};
-
-const parseNumber = (value: number, label: string): number => {
-  if (!value || typeof value !== "number") {
-    throw new Error(`Incorrect or missing ${label}`);
-  }
-
-  return value;
 };
 
 const isDate = (date: string): boolean => {
@@ -42,6 +34,23 @@ const parseGender = (gender: unknown): Gender => {
     throw new Error("Incorrect or missing gender: " + gender);
   }
   return gender;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isHealthCheckRating = (param: any): param is HealthCheckRating => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  return Object.values(HealthCheckRating).includes(param);
+};
+
+const parseHealthCheckRating = (
+  healthCheckRating: unknown
+): HealthCheckRating => {
+  if (!isHealthCheckRating(healthCheckRating)) {
+    throw new Error(
+      "Incorrect or missing healthCheckRating: " + healthCheckRating
+    );
+  }
+  return healthCheckRating;
 };
 
 type PatientFields = {
@@ -95,9 +104,9 @@ export const toNewEntry = ({
 }: EntryFields): NewEntry => {
   let newEntry: NewEntry;
   switch (type) {
-    case "Hospital":
+    case Type.Hospital:
       newEntry = {
-        type: "Hospital",
+        type: Type.Hospital,
         description: parseString(description, "description"),
         date: parseDate(date),
         specialist: parseString(specialist, "specialist"),
@@ -107,22 +116,22 @@ export const toNewEntry = ({
         }
       };
       break;
-    case "OccupationalHealthcare":
+    case Type.OccupationalHealthcare:
       newEntry = {
-        type: "OccupationalHealthcare",
+        type: Type.OccupationalHealthcare,
         description: parseString(description, "description"),
         date: parseDate(date),
         specialist: parseString(specialist, "specialist"),
         employerName: parseString(employerName, "employerName")
       };
       break;
-    case "HealthCheck":
+    case Type.HealthCheck:
       newEntry = {
-        type: "HealthCheck",
+        type: Type.HealthCheck,
         description: parseString(description, "description"),
         date: parseDate(date),
         specialist: parseString(specialist, "specialist"),
-        healthCheckRating: parseNumber(healthCheckRating, "healthCheckRating")
+        healthCheckRating: parseHealthCheckRating(healthCheckRating)
       };
       break;
     default:

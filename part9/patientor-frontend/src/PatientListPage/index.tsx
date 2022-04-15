@@ -16,8 +16,6 @@ import { TableBody } from "@material-ui/core";
 const PatientListPage = () => {
   const [{ patients }, dispatch] = useStateValue();
 
-  console.log(patients);
-
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>();
 
