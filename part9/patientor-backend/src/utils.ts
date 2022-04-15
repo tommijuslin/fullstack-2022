@@ -1,34 +1,34 @@
-import { Gender, NewPatientEntry } from './types';
+import { Gender, NewPatient, NewEntry } from "./types";
 
 const isString = (text: unknown): text is string => {
-  return typeof text === 'string' || text instanceof String;
+  return typeof text === "string" || text instanceof String;
 };
 
-const parseName = (name: unknown): string => {
-  if (!name || !isString(name)) {
-    throw new Error('Incorrect or missing name');
+const parseString = (item: unknown, label: string): string => {
+  if (!item || !isString(item)) {
+    throw new Error(`Incorrect or missing ${label}`);
   }
 
-  return name;
+  return item;
+};
+
+const parseNumber = (value: number, label: string): number => {
+  if (!value || typeof value !== "number") {
+    throw new Error(`Incorrect or missing ${label}`);
+  }
+
+  return value;
 };
 
 const isDate = (date: string): boolean => {
   return Boolean(Date.parse(date));
 };
 
-const parseDateOfBirth = (date: unknown): string => {
+const parseDate = (date: unknown): string => {
   if (!date || !isString(date) || !isDate(date)) {
-    throw new Error('Incorrect or missing date: ' + date);
+    throw new Error("Incorrect or missing date: " + date);
   }
   return date;
-};
-
-const parseSsn = (ssn: unknown): string => {
-  if (!ssn || !isString(ssn)) {
-    throw new Error('Incorrect or missing ssn');
-  }
-
-  return ssn;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -39,20 +39,12 @@ const isGender = (param: any): param is Gender => {
 
 const parseGender = (gender: unknown): Gender => {
   if (!gender || !isGender(gender)) {
-    throw new Error('Incorrect or missing gender: ' + gender);
+    throw new Error("Incorrect or missing gender: " + gender);
   }
   return gender;
 };
 
-const parseOccupation = (occupation: unknown): string => {
-  if (!occupation || !isString(occupation)) {
-    throw new Error('Incorrect or missing occupation');
-  }
-
-  return occupation;
-};
-
-type Fields = {
+type PatientFields = {
   name: unknown;
   dateOfBirth: unknown;
   ssn: unknown;
@@ -60,23 +52,82 @@ type Fields = {
   occupation: unknown;
 };
 
-const toNewPatientEntry = ({
+export const toNewPatient = ({
   name,
   dateOfBirth,
   ssn,
   gender,
   occupation
-}: Fields): NewPatientEntry => {
-  const newEntry: NewPatientEntry = {
-    name: parseName(name),
-    dateOfBirth: parseDateOfBirth(dateOfBirth),
-    ssn: parseSsn(ssn),
+}: PatientFields): NewPatient => {
+  const newPatient: NewPatient = {
+    name: parseString(name, "name"),
+    dateOfBirth: parseDate(dateOfBirth),
+    ssn: parseString(ssn, "ssn"),
     gender: parseGender(gender),
-    occupation: parseOccupation(occupation),
+    occupation: parseString(occupation, "occupation"),
     entries: []
   };
 
-  return newEntry;
+  return newPatient;
 };
 
-export default toNewPatientEntry;
+type EntryFields = {
+  date: unknown;
+  type: unknown;
+  specialist: unknown;
+  description: unknown;
+  discharge: {
+    date: unknown;
+    criteria: string;
+  };
+  employerName: unknown;
+  healthCheckRating: number;
+};
+
+export const toNewEntry = ({
+  date,
+  type,
+  specialist,
+  description,
+  discharge,
+  employerName,
+  healthCheckRating
+}: EntryFields): NewEntry => {
+  let newEntry: NewEntry;
+  switch (type) {
+    case "Hospital":
+      newEntry = {
+        type: "Hospital",
+        description: parseString(description, "description"),
+        date: parseDate(date),
+        specialist: parseString(specialist, "specialist"),
+        discharge: {
+          date: parseDate(date),
+          criteria: parseString(discharge.criteria, "criteria")
+        }
+      };
+      break;
+    case "OccupationalHealthcare":
+      newEntry = {
+        type: "OccupationalHealthcare",
+        description: parseString(description, "description"),
+        date: parseDate(date),
+        specialist: parseString(specialist, "specialist"),
+        employerName: parseString(employerName, "employerName")
+      };
+      break;
+    case "HealthCheck":
+      newEntry = {
+        type: "HealthCheck",
+        description: parseString(description, "description"),
+        date: parseDate(date),
+        specialist: parseString(specialist, "specialist"),
+        healthCheckRating: parseNumber(healthCheckRating, "healthCheckRating")
+      };
+      break;
+    default:
+      throw new Error("malformatted parameters");
+  }
+
+  return newEntry;
+};

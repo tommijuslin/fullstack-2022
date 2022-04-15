@@ -6,6 +6,7 @@ import { withStyles } from "@material-ui/core";
 type BarProps = {
   rating: number;
   showText: boolean;
+  max: number;
 };
 
 const StyledRating = withStyles({
@@ -24,13 +25,13 @@ const HEALTHBAR_TEXTS = [
   "The patient has a diagnosed condition",
 ];
 
-const HealthRatingBar = ({ rating, showText }: BarProps) => {
+const HealthRatingBar = ({ rating, showText, max }: BarProps) => {
   return (
     <div className="health-bar">
       <StyledRating
         readOnly
-        value={4 - rating}
-        max={4}
+        value={max - rating}
+        max={max}
         icon={<FavoriteIcon fontSize="inherit" />}
       />
 

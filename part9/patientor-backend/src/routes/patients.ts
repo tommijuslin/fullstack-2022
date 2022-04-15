@@ -1,30 +1,47 @@
-import express from 'express';
+import express from "express";
 
 const router = express.Router();
 
-import patientService from '../services/patientService';
-import toNewPatientEntry from '../utils';
+import patientService from "../services/patientService";
+import { toNewPatient, toNewEntry } from "../utils";
 
-router.get('/', (_req, res) => {
+router.get("/", (_req, res) => {
   res.send(patientService.getNonSensitiveEntries());
 });
 
-router.get('/:id', (req, res) => {
+router.get("/:id", (req, res) => {
   const patient = patientService.findById(req.params.id);
   res.json(patient);
 });
 
-router.post('/', (req, res) => {
+router.post("/", (req, res) => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const newPatientEntry = toNewPatientEntry(req.body);
+    const newPatient = toNewPatient(req.body);
+    const addedPatient = patientService.addPatient(newPatient);
 
-    const addedEntry = patientService.addPatient(newPatientEntry);
-    res.json(addedEntry);
+    res.json(addedPatient);
   } catch (error: unknown) {
-    let errorMessage = 'Something went wrong.';
+    let errorMessage = "Something went wrong.";
     if (error instanceof Error) {
-      errorMessage += ' Error: ' + error.message;
+      errorMessage += " Error: " + error.message;
+    }
+    res.status(400).send(errorMessage);
+  }
+});
+
+router.post("/:id/entries", (req, res) => {
+  const id = req.params.id;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const newEntry = toNewEntry(req.body);
+    const updatedPatient = patientService.addEntry(newEntry, id);
+
+    res.json(updatedPatient);
+  } catch (error: unknown) {
+    let errorMessage = "Something went wrong.";
+    if (error instanceof Error) {
+      errorMessage += " Error: " + error.message;
     }
     res.status(400).send(errorMessage);
   }

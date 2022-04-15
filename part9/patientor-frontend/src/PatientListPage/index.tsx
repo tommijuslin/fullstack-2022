@@ -16,6 +16,8 @@ import { TableBody } from "@material-ui/core";
 const PatientListPage = () => {
   const [{ patients }, dispatch] = useStateValue();
 
+  console.log(patients);
+
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>();
 
@@ -74,7 +76,7 @@ const PatientListPage = () => {
               <TableCell>{patient.gender}</TableCell>
               <TableCell>{patient.occupation}</TableCell>
               <TableCell>
-                <HealthRatingBar showText={false} rating={1} />
+                <HealthRatingBar showText={false} rating={1} max={4} />
               </TableCell>
             </TableRow>
           ))}
